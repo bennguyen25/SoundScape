@@ -5,6 +5,10 @@ import NeighborhoodScreen from './components/NeighborhoodScreen';
 import ConfirmationScreen from './components/ConfirmationScreen';
 import MemberDashboard from './components/MemberDashboard';
 import BusinessDashboard from './components/BusinessDashboard';
+import LoginScreen from './components/LoginScreen';
+import BusinessSignupScreen from './components/BusinessSignupScreen';
+import BusinessCategoryScreen from './components/BusinessCategoryScreen';
+import BusinessGoalScreen from './components/BusinessGoalScreen';
 import { api } from './utils/api';
 
 export default function App() {
@@ -13,6 +17,12 @@ export default function App() {
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   const [selectedNeighborhood, setSelectedNeighborhood] = useState('');
   const [dataInitialized, setDataInitialized] = useState(false);
+  const [userEmail, setUserEmail] = useState('');
+  const [userName, setUserName] = useState('');
+  const [businessName, setBusinessName] = useState('');
+  const [businessLocation, setBusinessLocation] = useState('');
+  const [businessCategory, setBusinessCategory] = useState('');
+  const [businessGoal, setBusinessGoal] = useState('');
 
   useEffect(() => {
     // Initialize sample data on mount
@@ -31,6 +41,30 @@ export default function App() {
     }
   }, []);
 
+  const handleLogin = (email: string, password: string, name: string) => {
+    setUserEmail(email);
+    setUserName(name);
+    setAccountType('member');
+    setCurrentScreen('interests');
+  };
+
+  const handleBusinessSignup = (business: string, location: string) => {
+    setBusinessName(business);
+    setBusinessLocation(location);
+    setAccountType('business');
+    setCurrentScreen('business-category');
+  };
+
+  const handleBusinessCategory = (category: string) => {
+    setBusinessCategory(category);
+    setCurrentScreen('business-goal');
+  };
+
+  const handleBusinessGoal = (goal: string) => {
+    setBusinessGoal(goal);
+    setCurrentScreen('dashboard');
+  };
+
   const handleComplete = () => {
     setCurrentScreen('dashboard');
   };
@@ -45,11 +79,55 @@ export default function App() {
     setSelectedInterests([]);
     setSelectedNeighborhood('');
     setAccountType('member');
+    setUserEmail('');
+    setUserName('');
+    setBusinessName('');
+    setBusinessLocation('');
+    setBusinessCategory('');
+    setBusinessGoal('');
   };
 
   // Onboarding flow
   if (currentScreen === 'welcome') {
-    return <WelcomeScreen onNext={() => setCurrentScreen('interests')} />;
+    return <WelcomeScreen onNext={() => setCurrentScreen('login')} />;
+  }
+
+  if (currentScreen === 'login') {
+    return (
+      <LoginScreen
+        onLogin={handleLogin}
+        onBack={() => setCurrentScreen('welcome')}
+        onSwitchToBusiness={() => setCurrentScreen('business-signup')}
+      />
+    );
+  }
+
+  if (currentScreen === 'business-signup') {
+    return (
+      <BusinessSignupScreen
+        onSignup={handleBusinessSignup}
+        onBack={() => setCurrentScreen('welcome')}
+        onSwitchToMember={() => setCurrentScreen('login')}
+      />
+    );
+  }
+
+  if (currentScreen === 'business-category') {
+    return (
+      <BusinessCategoryScreen
+        onNext={handleBusinessCategory}
+        onBack={() => setCurrentScreen('business-signup')}
+      />
+    );
+  }
+
+  if (currentScreen === 'business-goal') {
+    return (
+      <BusinessGoalScreen
+        onComplete={handleBusinessGoal}
+        onBack={() => setCurrentScreen('business-category')}
+      />
+    );
   }
 
   if (currentScreen === 'interests') {
@@ -58,7 +136,7 @@ export default function App() {
         selectedInterests={selectedInterests}
         onSelect={setSelectedInterests}
         onNext={() => setCurrentScreen('neighborhood')}
-        onBack={() => setCurrentScreen('welcome')}
+        onBack={() => setCurrentScreen('login')}
       />
     );
   }

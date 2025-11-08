@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { TrendingUp, MapPin, Sparkles, ArrowLeftRight, Map, Grid3x3, LogOut, DollarSign, Users, ShoppingBag, Coffee, Utensils } from 'lucide-react';
+import { TrendingUp, MapPin, Sparkles, ArrowLeftRight, Map, Grid3x3, LogOut, DollarSign, Users, ShoppingBag, Coffee, Utensils, Heart } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
 import { Badge } from './ui/badge';
 import { motion } from 'motion/react';
 import SoundMap from './SoundMap';
+import CommunityImpact from './CommunityImpact';
 
 interface MemberDashboardProps {
   interests: string[];
@@ -47,9 +48,14 @@ const mockDeals = [
 ];
 
 export default function MemberDashboard({ interests, neighborhood, onToggleAccount, onLogout }: MemberDashboardProps) {
-  const [activeView, setActiveView] = useState<'deals' | 'map'>('deals');
+  const [activeView, setActiveView] = useState<'deals' | 'map' | 'impact'>('deals');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [distanceFilter, setDistanceFilter] = useState(5);
+
+  // Show Community Impact page
+  if (activeView === 'impact') {
+    return <CommunityImpact onBack={() => setActiveView('deals')} />;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -89,7 +95,7 @@ export default function MemberDashboard({ interests, neighborhood, onToggleAccou
             <Card className="bg-white/10 backdrop-blur-sm border-white/20 text-white p-4">
               <div className="flex items-center gap-2 mb-2">
                 <DollarSign className="w-5 h-5 text-[#FFD100]" />
-                <span className="text-sm text-white/80">Cashback</span>
+                <span className="text-sm text-white/80">Savings</span>
               </div>
               <div>
                 <span className="text-sm">$</span>47.50
@@ -136,28 +142,45 @@ export default function MemberDashboard({ interests, neighborhood, onToggleAccou
 
       {/* View Toggle */}
       <div className="max-w-6xl mx-auto px-6 mb-6">
-        <div className="flex gap-2 bg-white rounded-lg p-1 shadow-sm">
+        <div className="flex gap-3 bg-white rounded-2xl p-2 shadow-md">
           <button
             onClick={() => setActiveView('deals')}
-            className={`flex-1 py-2 px-4 rounded-md transition-all ${
+            className={`flex-1 py-3 px-4 rounded-xl transition-all flex items-center justify-center gap-2 ${
               activeView === 'deals'
-                ? 'bg-[#003057] text-white'
-                : 'text-gray-600 hover:bg-gray-100'
+                ? 'bg-gradient-to-r from-[#003057] to-[#0066B3] text-white shadow-lg'
+                : 'text-gray-600 hover:bg-gray-50'
             }`}
+            aria-label="View local deals"
+            aria-pressed={activeView === 'deals'}
           >
-            <ShoppingBag className="w-4 h-4 inline mr-2" />
-            Local Deals
+            <ShoppingBag className="w-5 h-5" />
+            <span className="hidden sm:inline">Local Deals</span>
           </button>
           <button
             onClick={() => setActiveView('map')}
-            className={`flex-1 py-2 px-4 rounded-md transition-all ${
+            className={`flex-1 py-3 px-4 rounded-xl transition-all flex items-center justify-center gap-2 ${
               activeView === 'map'
-                ? 'bg-[#003057] text-white'
-                : 'text-gray-600 hover:bg-gray-100'
+                ? 'bg-gradient-to-r from-[#003057] to-[#0066B3] text-white shadow-lg'
+                : 'text-gray-600 hover:bg-gray-50'
             }`}
+            aria-label="View SoundMap"
+            aria-pressed={activeView === 'map'}
           >
-            <MapPin className="w-4 h-4 inline mr-2" />
-            SoundMap
+            <MapPin className="w-5 h-5" />
+            <span className="hidden sm:inline">SoundMap</span>
+          </button>
+          <button
+            onClick={() => setActiveView('impact')}
+            className={`flex-1 py-3 px-4 rounded-xl transition-all flex items-center justify-center gap-2 ${
+              activeView === 'impact'
+                ? 'bg-gradient-to-r from-[#003057] to-[#0066B3] text-white shadow-lg'
+                : 'text-gray-600 hover:bg-gray-50'
+            }`}
+            aria-label="View community impact"
+            aria-pressed={activeView === 'impact'}
+          >
+            <Heart className="w-5 h-5" />
+            <span className="hidden sm:inline">Impact</span>
           </button>
         </div>
       </div>

@@ -1,14 +1,15 @@
 import { useState, useEffect } from 'react';
-import { ArrowLeftRight, TrendingUp, Users, Calendar, Sparkles, Clock, Target, DollarSign, BarChart3, X, LogOut } from 'lucide-react';
+import { ArrowLeftRight, TrendingUp, Users, Calendar, Sparkles, Clock, Target, DollarSign, BarChart3, X, LogOut, Heart } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
 import { Badge } from './ui/badge';
 import { motion, AnimatePresence } from 'motion/react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from './ui/dialog';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import CommunityImpact from './CommunityImpact';
 
 interface BusinessDashboardProps {
   onToggleAccount: () => void;
@@ -98,6 +99,7 @@ export default function BusinessDashboard({ onToggleAccount, onLogout }: Busines
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [showPromotionDialog, setShowPromotionDialog] = useState(false);
   const [selectedInsight, setSelectedInsight] = useState<any>(null);
+  const [showCommunityImpact, setShowCommunityImpact] = useState(false);
   const [promotionForm, setPromotionForm] = useState({
     title: '',
     discount: '',
@@ -148,6 +150,11 @@ export default function BusinessDashboard({ onToggleAccount, onLogout }: Busines
     setShowPromotionDialog(false);
     // Show success message
   };
+
+  // Show Community Impact page
+  if (showCommunityImpact) {
+    return <CommunityImpact onBack={() => setShowCommunityImpact(false)} />;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -252,14 +259,24 @@ export default function BusinessDashboard({ onToggleAccount, onLogout }: Busines
 
       {/* Analytics Button */}
       <div className="max-w-md mx-auto px-6 mb-4">
-        <Button
-          onClick={() => setShowAnalytics(!showAnalytics)}
-          variant="outline"
-          className="w-full"
-        >
-          <BarChart3 className="w-4 h-4 mr-2" />
-          {showAnalytics ? 'Hide' : 'View'} Detailed Analytics
-        </Button>
+        <div className="grid grid-cols-2 gap-2">
+          <Button
+            onClick={() => setShowAnalytics(!showAnalytics)}
+            variant="outline"
+            className="w-full"
+          >
+            <BarChart3 className="w-4 h-4 mr-2" />
+            {showAnalytics ? 'Hide' : 'View'} Analytics
+          </Button>
+          <Button
+            onClick={() => setShowCommunityImpact(true)}
+            variant="outline"
+            className="w-full"
+          >
+            <Heart className="w-4 h-4 mr-2" />
+            Impact
+          </Button>
+        </div>
       </div>
 
       {/* Analytics Charts */}
@@ -389,6 +406,9 @@ export default function BusinessDashboard({ onToggleAccount, onLogout }: Busines
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>Schedule Promotion</DialogTitle>
+            <DialogDescription>
+              Set up a new promotion to boost your business.
+            </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div>
